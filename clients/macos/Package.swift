@@ -12,7 +12,14 @@ let package = Package(
         .executableTarget(
             name: "FocusCore",
             dependencies: [],
-            path: "Sources"
+            path: "Sources/FocusCore"
         ),
     ]
 )
+
+// CI build notes:
+//   * The Rust core builds `libfocuscore.a` (aarch64 + x86_64) via CI and exposes the C ABI
+//     declared in FocusCoreService.swift (focuscore_open/close/quick_add/version).
+//   * Link the static lib into this target on CI (linker flags or an `.systemLibrary`
+//     target with a module map) before `swift build --release`.
+//   * Artifact: .build/release/FocusCore
