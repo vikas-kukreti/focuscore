@@ -4,4 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FocusCore.WinUI">
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Single accent color used across the client. -->
+            <Color x:Key="AccentColor">#0078D4</Color>
+            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+        </ResourceDictionary>
+    </Application.Resources>
+
 </Application>

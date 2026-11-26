@@ -19,6 +19,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
+    <!-- Toast content building (paired with Windows.AppNotifications from the App SDK). -->
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+    <!-- System Tray / NotifyIcon helper for WinUI (listed; tray in this build is implemented
+         directly via Shell_NotifyIcon on a hidden message window per the PRD). -->
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.116" />
   </ItemGroup>
 
 </Project>
