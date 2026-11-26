@@ -1,0 +1,105 @@
+// FocusCore UniFFI interface definition.
+// Bindings for Kotlin and Swift are generated from this file with `uniffi-bindgen`.
+// The Rust implementation lives in core/src/lib.rs (free functions over a global core).
+
+namespace focuscore {
+
+    /// Version string.
+    focuscore_version(): String;
+
+    /// Open the core database at `db_path` (None => default "focuscore.db").
+    focuscore_open(db_path: String?): Result<String, String>;
+
+    focuscore_close();
+
+    /// Quick-add a top-level task. Returns the new task id.
+    focuscore_quick_add(title: String, scheduled_date: String?): Result<String, String>;
+
+    /// List today's tasks (optionally filtered by scheduled_date).
+    focuscore_list_tasks(scheduled_date: String?): List<Task>;
+
+    focuscore_get_task(id: String): Task?;
+
+    focuscore_update_task(task: Task): Result<(), String>;
+
+    focuscore_delete_task(id: String): Result<(), String>;
+
+    /// Insert a time entry linked to a task. Returns the entry id.
+    focuscore_insert_time_entry(
+        id: String,
+        task_id: String,
+        mode: TimerMode,
+        started_at: u64,
+        ended_at: u64,
+        duration_sec: u32,
+        created_at: u64,
+        updated_at: u64,
+    ): Result<String, String>;
+
+    focuscore_list_time_entries(task_id: String): List<TimeEntry>;
+
+    /// Timer engine.
+    focuscore_timer_state(): TimerState;
+    focuscore_timer_start(task_id: String, mode: TimerMode, total_sec: u32);
+    focuscore_timer_pause();
+    focuscore_timer_resume();
+    focuscore_timer_stop(): u32?;
+    focuscore_timer_reset();
+
+    /// One delta-sync round-trip against the Go sync server.
+    focuscore_sync(base_url: String, token: String): Result<SyncResult, String>;
+
+    enum TimerMode {
+        Pomodoro,
+        Stopwatch,
+    }
+
+    enum TimerStateKind {
+        Idle,
+        Running,
+        Paused,
+    }
+
+    record TimerState {
+        kind: TimerStateKind,
+        task_id: String?,
+        mode: TimerMode?,
+        remaining_sec: u32,
+        elapsed_sec: u32,
+    }
+
+    record Task {
+        id: String,
+        parent_id: String?,
+        title: String,
+        notes: String,
+        status: String,
+        scheduled_date: String?,
+        timebox_start_min: u32?,
+        timebox_duration_min: u32?,
+        reminder_enabled: bool,
+        sort_order: i32,
+        created_at: u64,
+        updated_at: u64,
+        deleted_at: u64?,
+    }
+
+    record TimeEntry {
+        id: String,
+        task_id: String,
+        mode: TimerMode,
+        started_at: u64,
+        ended_at: u64,
+        duration_sec: u32,
+        created_at: u64,
+        updated_at: u64,
+        deleted_at: u64?,
+    }
+
+    record SyncResult {
+        tasks_pushed: u32,
+        tasks_pulled: u32,
+        entries_pushed: u32,
+        entries_pulled: u32,
+    }
+}
