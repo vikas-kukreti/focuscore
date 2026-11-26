@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">FocusCore</string>
+
+    <!-- Navigation -->
+    <string name="tab_today">Today</string>
+    <string name="tab_inbox">Inbox</string>
+    <string name="tab_timebox">Timebox</string>
+
+    <!-- Quick add -->
+    <string name="quick_add">Quick add</string>
+    <string name="hint_task_title">New task…</string>
+    <string name="add">Add</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Task detail -->
+    <string name="notes">Notes</string>
+    <string name="pomodoro">Pomodoro</string>
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+    <string name="done">Done</string>
+    <string name="schedule">Schedule</string>
+    <string name="slot_empty">Empty slot</string>
+
+    <!-- Notification channels -->
+    <string name="channel_foreground_name">FocusCore timer</string>
+    <string name="channel_foreground_description">Ongoing timer notification</string>
+    <string name="channel_timebox_name">Timebox reminders</string>
+    <string name="channel_timebox_description">Notifies when a scheduled timebox block begins</string>
+
+    <!-- Timebox reminders -->
+    <string name="timebox_reminder_title">Timebox starting</string>
+    <string name="timebox_reminder_body">Your timebox for “%1$s” begins now.</string>
+
+    <!-- Glance widget -->
+    <string name="today_widget_title">Today’s top tasks</string>
+    <string name="today_widget_description">FocusCore: today’s top tasks</string>
+
+    <!-- Quick settings tile -->
+    <string name="qs_tile_label">FocusCore</string>
+    <string name="qs_tile_start">Start focus</string>
+</resources>

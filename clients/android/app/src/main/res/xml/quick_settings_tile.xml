@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Metadata placeholder for the FocusCore quick settings tile.
+     The tile is declared in AndroidManifest.xml (FocusTileService, permission
+     BIND_QUICK_SETTINGS_TILE, action QS_TILE) and configured at runtime in
+     FocusTileService.onStartListening / onClick. -->
+<quick-settings-tile xmlns:android="http://schemas.android.com/apk/res/android" />

@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.FocusCore" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/focuscore_primary</item>
+        <item name="android:windowBackground">@color/focuscore_surface</item>
+    </style>
+</resources>
