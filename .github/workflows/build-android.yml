@@ -1,0 +1,59 @@
+name: Build Android
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  RUST_VERSION: "stable"
+  CORE_MANIFEST: core/Cargo.toml
+  ANDROID_SDK_ROOT: /usr/lib/android-sdk
+
+jobs:
+  build-core-android:
+    name: Build Rust core for Android (.so)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+      - name: Build core for Android
+        run: cargo ndk -r --manifest-path ${{ env.CORE_MANIFEST }} -- -C link-arg=-s
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focuscore-android-libs
+          path: core/target/**/libfocuscore.so
+          retention-days: 30
+
+  build-apk:
+    name: Assemble Debug APK
+    runs-on: ubuntu-latest
+    needs: build-core-android
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: focuscore-android-libs
+          path: clients/android/app/src/main/jniLibs
+      - uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Assemble debug APK
+        working-directory: clients/android
+        run: ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focuscore-android-apk
+          path: clients/android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+        if: always()

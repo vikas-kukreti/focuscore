@@ -1,0 +1,54 @@
+name: Build macOS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  RUST_VERSION: "stable"
+  CORE_MANIFEST: core/Cargo.toml
+
+jobs:
+  build-core-macos:
+    name: Build Rust core (static lib + xcframework)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - name: Build core static libs (both Apple silicon + Intel)
+        run: |
+          cargo build --release --manifest-path ${{ env.CORE_MANIFEST }} --target aarch64-apple-darwin
+          cargo build --release --manifest-path ${{ env.CORE_MANIFEST }} --target x86_64-apple-darwin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focuscore-macos-core
+          path: |
+            core/target/aarch64-apple-darwin/release/libfocuscore.a
+            core/target/x86_64-apple-darwin/release/libfocuscore.a
+          retention-days: 30
+
+  build-app:
+    name: Build macOS executable (SwiftPM)
+    runs-on: macos-latest
+    needs: build-core-macos
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: focuscore-macos-core
+          path: clients/macos/Frameworks
+      - name: Build SwiftPM executable
+        working-directory: clients/macos
+        run: swift build --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focuscore-macos-app
+          path: clients/macos/.build/release/FocusCore
+          retention-days: 30
+        if: always()

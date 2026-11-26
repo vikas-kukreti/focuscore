@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: FocusCore ${{ github.ref_name }}
+          body: |
+            FocusCore ${{ github.ref_name }}
+
+            Installers / artifacts are published per-platform from the matching
+            GitHub Actions build runs (Windows, Android, macOS). Download them
+            from the Actions tab or the individual workflow run artifacts.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
