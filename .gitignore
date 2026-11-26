@@ -1,0 +1,47 @@
+# Binaries / artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+*.apk
+*.aab
+*.xcframework
+*.framework
+target/
+build/
+out/
+bin/
+obj/
+*.pdb
+*.idb
+*.ilk
+
+# Go
+/server/vendor
+/go.sum
+
+# Android
+*.keystore
+local.properties
+.idea/
+.gradle/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# macOS / Xcode
+*.xcuserstate
+DerivedData/
+*.xcblueprint
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+*.env.local
+
+# Logs
+*.log
