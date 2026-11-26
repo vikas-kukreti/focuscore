@@ -17,6 +17,11 @@ obj/
 *.idb
 *.ilk
 
+# SQLite (local dev artifacts — not committed)
+*.db
+*.db-shm
+*.db-wal
+
 # Go
 /server/vendor
 /go.sum
