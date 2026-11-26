@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GO_VERSION: "1.24"
+  RUST_VERSION: "stable"
+
+jobs:
+  fmt-clippy:
+    name: fmt & clippy (Rust)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --check --manifest-path core/Cargo.toml
+      - run: cargo clippy --all-targets --manifest-path core/Cargo.toml -- -D warnings
+
+  go-test:
+    name: Go sync server tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - run: go test ./... -v
+        working-directory: server
+
+  rust-test:
+    name: Rust core tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --manifest-path core/Cargo.toml -- --test-threads=1
+
+  schema-check:
+    name: Schema is valid SQLite DDL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq sqlite3 >/dev/null 2>&1 || true
+          sqlite3 :memory: < schema.sql && echo "SCHEMA_OK"

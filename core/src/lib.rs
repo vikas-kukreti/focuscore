@@ -7,6 +7,12 @@
 //!
 //! All state lives in a single SQLite database (WAL mode). Time is Unix epoch
 //! ms UTC. The timer engine is deterministic (timestamps, not sleep loops).
+//!
+//! This is an FFI/library-boundary API, so many public functions naturally take
+//! several parameters and some items are only used by foreign clients.
+
+#![allow(dead_code)]
+#![allow(clippy::too_many_arguments)]
 
 mod abi;
 mod models;
@@ -17,7 +23,7 @@ mod timer;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use crate::models::{Task, TimeEntry, TimerMode, TimerState, SyncResult};
+use crate::models::{SyncResult, Task, TimeEntry, TimerMode, TimerState};
 use crate::store::Store;
 use crate::sync::SyncClient;
 use crate::timer::TimerEngine;
@@ -34,8 +40,7 @@ impl Core {
     fn open_with_path(db_path: Option<&str>) -> Result<Self, String> {
         let path = db_path.unwrap_or("focuscore.db");
         let store = Arc::new(
-            Store::open(std::path::Path::new(path))
-                .map_err(|e| format!("open store: {}", e))?,
+            Store::open(std::path::Path::new(path)).map_err(|e| format!("open store: {}", e))?,
         );
         Ok(Self {
             store,
@@ -92,28 +97,33 @@ pub fn focuscore_quick_add(
     title: String,
     scheduled_date: Option<String>,
 ) -> Result<String, String> {
-    with_core(|core| {
-        let now = time_now_ms();
-        core.store.insert_task(
-            &uuid::Uuid::now_v7().to_string(),
-            None,
-            &title,
-            "",
-            "todo",
-            scheduled_date.as_deref(),
-            None,
-            None,
-            1,
-            0,
-            now,
-            now,
-        )
-    })
-    .map_err(|e| e.to_string())
+    let now = time_now_ms();
+    let id = uuid::Uuid::now_v7().to_string();
+    let task = crate::models::Task {
+        id: id.clone(),
+        parent_id: None,
+        title,
+        notes: String::new(),
+        status: "todo".into(),
+        scheduled_date,
+        timebox_start_min: None,
+        timebox_duration_min: None,
+        reminder_enabled: true,
+        sort_order: 0,
+        created_at: now,
+        updated_at: now,
+        deleted_at: None,
+    };
+    let db_res = with_core(|core| core.store.insert_task(&task));
+    db_res.map(|_| id).map_err(|e| e.to_string())
 }
 
 pub fn focuscore_list_tasks(scheduled_date: Option<String>) -> Vec<Task> {
-    with_core(|core| core.store.list_tasks(scheduled_date.as_deref()).unwrap_or_default())
+    with_core(|core| {
+        core.store
+            .list_tasks(scheduled_date.as_deref())
+            .unwrap_or_default()
+    })
 }
 
 pub fn focuscore_get_task(id: String) -> Option<Task> {
@@ -138,19 +148,27 @@ pub fn focuscore_insert_time_entry(
     created_at: i64,
     updated_at: i64,
 ) -> Result<String, String> {
-    let mode_str = match mode {
-        TimerMode::Pomodoro => "pomodoro",
-        TimerMode::Stopwatch => "stopwatch",
+    let entry = crate::models::TimeEntry {
+        id: id.clone(),
+        task_id,
+        mode,
+        started_at,
+        ended_at,
+        duration_sec,
+        created_at,
+        updated_at,
+        deleted_at: None,
     };
-    with_core(|core| {
-        core.store
-            .insert_time_entry(&id, &task_id, mode_str, started_at, ended_at, duration_sec, created_at, updated_at)
-    })
-    .map_err(|e| e.to_string())
+    let db_res = with_core(|core| core.store.insert_time_entry(&entry));
+    db_res.map(|_| id).map_err(|e| e.to_string())
 }
 
 pub fn focuscore_list_time_entries(task_id: String) -> Vec<TimeEntry> {
-    with_core(|core| core.store.list_time_entries_for_task(&task_id).unwrap_or_default())
+    with_core(|core| {
+        core.store
+            .list_time_entries_for_task(&task_id)
+            .unwrap_or_default()
+    })
 }
 
 pub fn focuscore_timer_state() -> TimerState {
@@ -189,6 +207,17 @@ pub fn focuscore_sync(_base_url: String, _token: String) -> Result<SyncResult, S
 mod tests {
     use super::*;
 
+    /// Close any open core and open a fresh temp database for this test.
+    fn open_test_db() {
+        focuscore_close();
+        let nano = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!("focuscore-test-{}.db", nano));
+        focuscore_open(Some(path.to_string_lossy().to_string())).unwrap();
+    }
+
     #[test]
     fn version_nonempty() {
         assert!(!focuscore_version().is_empty());
@@ -196,7 +225,7 @@ mod tests {
 
     #[test]
     fn quick_add_and_list_task() {
-        focuscore_open(None).unwrap();
+        open_test_db();
         let id = focuscore_quick_add("Buy milk".into(), None).unwrap();
         assert!(!id.is_empty());
         let tasks = focuscore_list_tasks(None);
@@ -223,6 +252,7 @@ mod tests {
 
     #[test]
     fn timer_lifecycle() {
+        open_test_db();
         focuscore_timer_start("t1".into(), TimerMode::Pomodoro, 60);
         let st = focuscore_timer_state();
         assert!(matches!(st.kind, crate::models::TimerStateKind::Running));
@@ -244,6 +274,7 @@ mod tests {
 
     #[test]
     fn time_entry_round_trip() {
+        open_test_db();
         let task_id = focuscore_quick_add("parent task".into(), None).unwrap();
         let id = focuscore_insert_time_entry(
             "e1".into(),

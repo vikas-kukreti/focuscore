@@ -6,7 +6,6 @@ use crate::time_now_ms;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::time::Duration;
-use ureq;
 
 const SYNC_PATH: &str = "/sync";
 
@@ -99,7 +98,9 @@ impl SyncClient {
             time_entries: dirty_entries.iter().map(entry_to_payload).collect(),
         };
 
-        let client = ureq::AgentBuilder::new().timeout(Duration::from_secs(10)).build();
+        let client = ureq::AgentBuilder::new()
+            .timeout(Duration::from_secs(10))
+            .build();
         let resp: SyncResponse = client
             .post(&format!("{}{}", self.base_url, SYNC_PATH))
             .set("Authorization", &format!("Bearer {}", self.token))
@@ -112,7 +113,8 @@ impl SyncClient {
         let mut tasks_pulled = 0i32;
         for t in &resp.tasks {
             let existing = store.get_task(&t.id).map_err(|e| e.to_string())?;
-            let should_write = existing.is_none() || existing.as_ref().unwrap().updated_at <= t.updated_at;
+            let should_write =
+                existing.is_none() || existing.as_ref().unwrap().updated_at <= t.updated_at;
             if should_write {
                 let task = Task {
                     id: t.id.clone(),
@@ -135,21 +137,33 @@ impl SyncClient {
         }
 
         let mut entries_pulled = 0i32;
-        for e in &resp.time_entries {
-            store
-                .insert_time_entry(
-                    &e.id, &e.task_id,
-                    match e.mode.as_str() { "pomodoro" => "pomodoro", _ => "stopwatch" },
-                    e.started_at, e.ended_at, e.duration_sec, e.created_at, e.updated_at,
-                )
-                .map_err(|e| e.to_string())?;
+        for payload in &resp.time_entries {
+            let entry = crate::models::TimeEntry {
+                id: payload.id.clone(),
+                task_id: payload.task_id.clone(),
+                mode: match payload.mode.as_str() {
+                    "pomodoro" => TimerMode::Pomodoro,
+                    _ => TimerMode::Stopwatch,
+                },
+                started_at: payload.started_at,
+                ended_at: payload.ended_at,
+                duration_sec: payload.duration_sec,
+                created_at: payload.created_at,
+                updated_at: payload.updated_at,
+                deleted_at: payload.deleted_at,
+            };
+            store.insert_time_entry(&entry).map_err(|e| e.to_string())?;
             entries_pulled += 1;
         }
 
         let pushed_task_ids: Vec<String> = dirty_tasks.iter().map(|t| t.id.clone()).collect();
         let pushed_entry_ids: Vec<String> = dirty_entries.iter().map(|e| e.id.clone()).collect();
-        store.mark_dirty_cleared("tasks", &pushed_task_ids).map_err(|e| e.to_string())?;
-        store.mark_dirty_cleared("time_entries", &pushed_entry_ids).map_err(|e| e.to_string())?;
+        store
+            .mark_dirty_cleared("tasks", &pushed_task_ids)
+            .map_err(|e| e.to_string())?;
+        store
+            .mark_dirty_cleared("time_entries", &pushed_entry_ids)
+            .map_err(|e| e.to_string())?;
 
         let now = time_now_ms();
         self.set_last_sync(now);

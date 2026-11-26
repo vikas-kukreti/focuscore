@@ -3,15 +3,14 @@
 //! State is derived from monotonic UTC timestamps:
 //!   - Running: started_at + paused_duration -> remaining = total - (now - started_at - paused_duration)
 //!   - Paused: remaining frozen at pause time
+//!
 //! No background sleep loops are used.
 
 use crate::models::{TimerMode, TimerState, TimerStateKind};
 use crate::time_now_ms;
 
-/// Default pomodoro lengths (seconds).
+/// Default pomodoro work length (seconds).
 const DEFAULT_WORK_SEC: i32 = 25 * 60;
-const DEFAULT_SHORT_BREAK_SEC: i32 = 5 * 60;
-const DEFAULT_LONG_BREAK_SEC: i32 = 15 * 60;
 
 pub struct TimerEngine {
     task_id: Option<String>,
@@ -120,9 +119,7 @@ impl TimerEngine {
     }
 
     pub fn stop(&mut self) -> Option<i32> {
-        if self.started_at.is_none() {
-            return None;
-        }
+        let _ = self.started_at?;
         let completed_sec = self.total_sec - self.current_remaining().max(0);
         // Reset to idle.
         self.started_at = None;

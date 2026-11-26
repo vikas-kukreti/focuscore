@@ -6,7 +6,7 @@ pub struct Task {
     pub parent_id: Option<String>,
     pub title: String,
     pub notes: String,
-    pub status: String, // 'todo' | 'done'
+    pub status: String,                 // 'todo' | 'done'
     pub scheduled_date: Option<String>, // 'YYYY-MM-DD'
     pub timebox_start_min: Option<i32>,
     pub timebox_duration_min: Option<i32>,

@@ -4,7 +4,7 @@ use rusqlite::{params, Connection};
 use std::path::Path;
 use std::sync::Mutex;
 
-use crate::models::Task;
+use crate::models::{Task, TimeEntry, TimerMode};
 use crate::time_now_ms;
 
 /// Schema is the shared repo-root `schema.sql` — single source of truth.
@@ -23,55 +23,33 @@ impl Store {
         })
     }
 
-    pub fn in_memory() -> rusqlite::Result<Self> {
-        let conn = Connection::open("file:focuscore?mode=memory&cache=shared")?;
-        conn.execute_batch(SCHEMA)?;
-        Ok(Self {
-            conn: Mutex::new(conn),
-        })
-    }
-
     fn conn(&self) -> std::sync::MutexGuard<'_, Connection> {
         self.conn.lock().unwrap()
     }
 
     /// Insert a task. Returns the task id.
-    pub fn insert_task(
-        &self,
-        id: &str,
-        parent_id: Option<&str>,
-        title: &str,
-        notes: &str,
-        status: &str,
-        scheduled_date: Option<&str>,
-        timebox_start_min: Option<i32>,
-        timebox_duration_min: Option<i32>,
-        reminder_enabled: i32,
-        sort_order: i32,
-        created_at: i64,
-        updated_at: i64,
-    ) -> rusqlite::Result<String> {
+    pub fn insert_task(&self, task: &Task) -> rusqlite::Result<String> {
         self.conn().execute(
             "INSERT INTO tasks (id, parent_id, title, notes, status, scheduled_date, \
              timebox_start_min, timebox_duration_min, reminder_enabled, sort_order, \
              created_at, updated_at, deleted_at, is_dirty)
              VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,NULL,1)",
             params![
-                id,
-                parent_id,
-                title,
-                notes,
-                status,
-                scheduled_date,
-                timebox_start_min,
-                timebox_duration_min,
-                reminder_enabled,
-                sort_order,
-                created_at,
-                updated_at,
+                task.id,
+                task.parent_id,
+                task.title,
+                task.notes,
+                task.status,
+                task.scheduled_date,
+                task.timebox_start_min,
+                task.timebox_duration_min,
+                task.reminder_enabled as i32,
+                task.sort_order,
+                task.created_at,
+                task.updated_at,
             ],
         )?;
-        Ok(id.to_string())
+        Ok(task.id.clone())
     }
 
     pub fn list_tasks(&self, scheduled_date: Option<&str>) -> rusqlite::Result<Vec<Task>> {
@@ -91,7 +69,7 @@ impl Store {
                 vec![],
             ),
         };
-        let mut stmt = conn.prepare(&sql)?;
+        let mut stmt = conn.prepare(sql)?;
         let rows = stmt.query_map(rusqlite::params_from_iter(params), |r| {
             Ok(Task {
                 id: r.get(0)?,
@@ -179,27 +157,32 @@ impl Store {
         )
     }
 
-    pub fn insert_time_entry(
-        &self,
-        id: &str,
-        task_id: &str,
-        mode: &str,
-        started_at: i64,
-        ended_at: i64,
-        duration_sec: i32,
-        created_at: i64,
-        updated_at: i64,
-    ) -> rusqlite::Result<String> {
+    pub fn insert_time_entry(&self, entry: &TimeEntry) -> rusqlite::Result<String> {
         self.conn().execute(
             "INSERT INTO time_entries (id, task_id, mode, started_at, ended_at, duration_sec, \
              created_at, updated_at, deleted_at, is_dirty)
              VALUES (?1,?2,?3,?4,?5,?6,?7,?8,NULL,1)",
-            params![id, task_id, mode, started_at, ended_at, duration_sec, created_at, updated_at],
+            params![
+                entry.id,
+                entry.task_id,
+                match entry.mode {
+                    TimerMode::Pomodoro => "pomodoro",
+                    TimerMode::Stopwatch => "stopwatch",
+                },
+                entry.started_at,
+                entry.ended_at,
+                entry.duration_sec,
+                entry.created_at,
+                entry.updated_at,
+            ],
         )?;
-        Ok(id.to_string())
+        Ok(entry.id.clone())
     }
 
-    pub fn list_time_entries_for_task(&self, task_id: &str) -> rusqlite::Result<Vec<crate::models::TimeEntry>> {
+    pub fn list_time_entries_for_task(
+        &self,
+        task_id: &str,
+    ) -> rusqlite::Result<Vec<crate::models::TimeEntry>> {
         let conn = self.conn();
         let mut stmt = conn.prepare(
             "SELECT id, task_id, mode, started_at, ended_at, duration_sec, created_at, updated_at, \
@@ -313,4 +296,3 @@ impl Store {
         Ok(total)
     }
 }
-
