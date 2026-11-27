@@ -153,7 +153,7 @@ public final class FocusCoreService: ObservableObject {
 
     private func startPolling() {
         stopPolling()
-        pollTask = Swift.Task {
+        pollTask = Swift.Task { [weak self] in
             while !Swift.Task.isCancelled {
                 if let self = self {
                     await self.refreshTimerState()
@@ -163,7 +163,7 @@ public final class FocusCoreService: ObservableObject {
         }
     }
 
-    private func stopPolling() {
+    nonisolated private func stopPolling() {
         pollTask?.cancel()
         pollTask = nil
     }

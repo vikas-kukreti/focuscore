@@ -31,7 +31,7 @@ public final class GlobalHotkey {
         }
     }
 
-    public func unregister() {
+    nonisolated public func unregister() {
         if let monitor = monitor {
             NSEvent.removeMonitor(monitor)
             self.monitor = nil
