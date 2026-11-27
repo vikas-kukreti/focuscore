@@ -25,7 +25,6 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
     public func registerCategories() {
         let pomodoroComplete = UNNotificationCategory(
             identifier: "pomodoro-complete",
-            title: nil,
             actions: [
                 UNNotificationAction(identifier: "start-break", title: "Start Break", options: []),
                 UNNotificationAction(identifier: "extend-5m", title: "Extend 5m", options: []),
@@ -40,7 +39,6 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
 
         let timeboxStart = UNNotificationCategory(
             identifier: "timebox-start",
-            title: nil,
             actions: [
                 UNNotificationAction(identifier: "snooze-5m", title: "Snooze 5m", options: []),
                 UNNotificationAction(identifier: "view-task", title: "View Task",

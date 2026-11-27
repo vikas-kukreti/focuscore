@@ -12,8 +12,9 @@
           RowDefinitions="Auto,*">
 
         <!-- Pomodoro timer bar (accent) -->
-        <Grid Grid.Row="0" Grid.ColumnSpan="3"
-              Background="{StaticResource AccentBrush}" Padding="14,10" RowSpacing="6">
+        <Border Grid.Row="0" Grid.ColumnSpan="3"
+                Background="{StaticResource AccentBrush}" Padding="14,10">
+            <Grid ColumnSpan="3" RowSpacing="6">
             <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
                 <TextBlock x:Name="TimerText" Text="00:00" Foreground="White"
                            FontSize="40" FontWeight="Bold" />
@@ -28,7 +29,8 @@
                 <Button x:Name="BtnPause" Content="⏸ Pause" Click="OnTimerPause" />
                 <Button x:Name="BtnStop" Content="⏹ Stop" Click="OnTimerStop" />
             </StackPanel>
-        </Grid>
+            </Grid>
+        </Border>
 
         <!-- Today's task list -->
         <ListView x:Name="TaskList" Grid.Row="1" Grid.Column="0" Margin="12,12,6,12"
