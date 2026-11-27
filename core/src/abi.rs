@@ -40,7 +40,7 @@ pub struct TimerStateAbi {
     pub elapsed_sec: c_int,
 }
 
-/// Release a `*const i8` / `*mut c_char` previously returned by a focuscore_* function.
+/// Release a `*const c_char` / `*mut c_char` previously returned by a focuscore_* function.
 #[no_mangle]
 pub extern "C" fn focuscore_string_free(ptr: *mut c_void) {
     if !ptr.is_null() {
@@ -134,7 +134,7 @@ pub extern "C" fn focuscore_insert_time_entry(
 ) -> *const c_char {
     let id = cstr_to_string(id);
     if id.is_empty() {
-        return c"".as_ptr();
+        return std::ptr::null::<c_char>();
     }
     let task_id = cstr_to_string(task_id);
     let mode = match mode {
@@ -155,7 +155,7 @@ pub extern "C" fn focuscore_insert_time_entry(
     });
     match res {
         Ok(_) => CString::new(id).unwrap().into_raw() as *const c_char,
-        Err(_) => c"".as_ptr(),
+        Err(_) => std::ptr::null::<c_char>(),
     }
 }
 
@@ -227,12 +227,12 @@ pub extern "C" fn focuscore_sync(base_url: *const c_char, token: *const c_char) 
 }
 
 #[no_mangle]
-pub extern "C" fn focuscore_version() -> *const i8 {
+pub extern "C" fn focuscore_version() -> *const c_char {
     c"focuscore 0.1.0".as_ptr()
 }
 
 #[no_mangle]
-pub extern "C" fn focuscore_open(db_path: *const i8) -> i32 {
+pub extern "C" fn focuscore_open(db_path: *const c_char) -> i32 {
     let path = if db_path.is_null() {
         None
     } else {
@@ -260,7 +260,10 @@ pub extern "C" fn focuscore_close() {
 }
 
 #[no_mangle]
-pub extern "C" fn focuscore_quick_add(title: *const i8, scheduled_date: *const i8) -> *const i8 {
+pub extern "C" fn focuscore_quick_add(
+    title: *const c_char,
+    scheduled_date: *const c_char,
+) -> *const c_char {
     let title = unsafe {
         std::ffi::CStr::from_ptr(title)
             .to_string_lossy()
@@ -297,8 +300,8 @@ pub extern "C" fn focuscore_quick_add(title: *const i8, scheduled_date: *const i
         Ok(_) => {
             let out = format!("{}\0", id);
             let cstr = std::ffi::CString::new(out).unwrap();
-            cstr.into_raw() as *const i8
+            cstr.into_raw() as *const c_char
         }
-        Err(_) => c"".as_ptr(),
+        Err(_) => std::ptr::null::<c_char>(),
     }
 }
