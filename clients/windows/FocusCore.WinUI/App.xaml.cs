@@ -139,7 +139,7 @@ public partial class App : Application
         Shell_NotifyIconW(NIM_DELETE, ref nid);
     }
 
-    private void UpdateTrayTip(CoreService.TimerState st)
+    private void UpdateTrayTip(TimerState st)
     {
         string tip = st.kind switch
         {
