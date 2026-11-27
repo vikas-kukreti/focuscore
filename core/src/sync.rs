@@ -5,7 +5,6 @@ use crate::store::Store;
 use crate::time_now_ms;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use std::time::Duration;
 
 const SYNC_PATH: &str = "/sync";
 
@@ -98,16 +97,16 @@ impl SyncClient {
             time_entries: dirty_entries.iter().map(entry_to_payload).collect(),
         };
 
-        let client = ureq::AgentBuilder::new()
-            .timeout(Duration::from_secs(10))
-            .build();
-        let resp: SyncResponse = client
+        let client = ureq::Agent::new_with_defaults();
+        let response = client
             .post(&format!("{}{}", self.base_url, SYNC_PATH))
-            .set("Authorization", &format!("Bearer {}", self.token))
-            .set("Content-Type", "application/json")
+            .header("Authorization", &format!("Bearer {}", self.token))
+            .header("Content-Type", "application/json")
             .send_json(&req)
-            .map_err(|e| format!("sync request failed: {}", e))?
-            .into_json()
+            .map_err(|e| format!("sync request failed: {}", e))?;
+        let mut body = response.into_body();
+        let resp: SyncResponse = body
+            .read_json()
             .map_err(|e| format!("sync response parse failed: {}", e))?;
 
         let mut tasks_pulled = 0i32;
