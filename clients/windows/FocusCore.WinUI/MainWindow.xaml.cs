@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Windowing;
+using Windows.Graphics;
 
 namespace FocusCore.WinUI;
 
@@ -21,6 +23,12 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
+
+        // Set window size programmatically (WinUI 3 doesn't support Width/Height in XAML)
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+        var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
+        var appWindow = AppWindow.GetFromWindowId(windowId);
+        appWindow.Resize(new SizeInt32(1140, 720));
 
         // Timebox timeline: 06:00–23:00.
         for (int h = 6; h <= 23; h++)
