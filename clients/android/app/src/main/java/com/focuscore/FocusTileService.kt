@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.graphics.drawable.Icon
+import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 
 /**
@@ -19,7 +20,7 @@ class FocusTileService : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
-        val tile = qsTile
+        val tile = qsTile ?: return
         tile.state = if (prefs.getBoolean("timer_running", false)) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         tile.label = getString(R.string.qs_tile_label)
         tile.icon = Icon.createWithResource(this, R.drawable.ic_launcher)
@@ -28,6 +29,7 @@ class FocusTileService : TileService() {
 
     override fun onClick() {
         super.onClick()
+        val tile = qsTile ?: return
         val running = prefs.getBoolean("timer_running", false)
         val intent = Intent(this, FocusService::class.java).apply {
             action = if (running) FocusService.ACTION_CMD_PAUSE else FocusService.ACTION_CMD_START
@@ -41,7 +43,6 @@ class FocusTileService : TileService() {
             startService(intent)
         }
         // Optimistically toggle; onStartListening reconciles against prefs.
-        val tile = qsTile
         tile.state = if (running) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
         tile.updateTile()
     }

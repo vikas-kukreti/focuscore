@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.focuscore.core.FocusCore
 
 class FocusService : Service() {
@@ -90,9 +91,12 @@ class FocusService : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         if (running && totalSeconds > 0) {
-            // Chronometer counts down from totalSeconds using elapsed-realtime clock.
-            val base = SystemClock.elapsedRealtime()
-            builder.setChronometer(base, totalSeconds.toLong() * 1000, true)
+            // Show elapsed time using when timestamp
+            val when = System.currentTimeMillis() - (totalSeconds * 1000L)
+            builder.setWhen(when)
+                .setShowWhen(true)
+                .setUsesChronometer(true)
+                .setChronometerCountDown(true)
         }
 
         val openIntent = Intent(this, MainActivity::class.java)
@@ -100,11 +104,11 @@ class FocusService : Service() {
         builder.setContentIntent(openPending)
 
         builder.addAction(makeAction(android.R.drawable.ic_media_pause, getString(R.string.pause), ACTION_CMD_PAUSE))
-        builder.addAction(makeAction(android.R.drawable.ic_media_stop, getString(R.string.stop), ACTION_CMD_STOP))
+        builder.addAction(makeAction(android.R.drawable.ic_media_pause, getString(R.string.stop), ACTION_CMD_STOP))
         builder.addAction(makeAction(android.R.drawable.ic_menu_save, getString(R.string.done), ACTION_CMD_DONE))
 
         val notification = builder.build()
-        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val nm = NotificationManagerCompat.from(this)
         nm.notify(NOTIFICATION_ID, notification)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHostController
 import androidx.navigation.compose.composable
@@ -119,7 +120,7 @@ fun FocusCoreApp() {
 /** Bottom chip-style navigation: Today / Inbox / Timebox. */
 @Composable
 fun FocusBottomNav(navController: NavHostController) {
-    val route by navController.currentBackStackEntryAsState().value.route
+    val route by navController.currentBackStackEntryAsState().value?.route ?: ""
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -156,7 +157,7 @@ fun QuickAddFab() {
     var title by remember { mutableStateOf("") }
 
     FloatingActionButton(onClick = { open = true }) {
-        Text(text = "+", style = MaterialTheme.typography.titleLarge)
+        Text(text = "+", fontSize = 24.sp)
     }
 
     if (open) {
@@ -203,7 +204,7 @@ fun TaskRow(task: Task, navController: NavHostController, viewModel: TodayViewMo
     ) {
         Checkbox(
             checked = task.done,
-            onChecked = { viewModel.toggleDone(task) }
+            onCheckedChange = { viewModel.toggleDone(task) }
         )
         Column(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
             Text(
@@ -278,7 +279,7 @@ fun TaskDetailScreen(taskId: Long, navController: NavHostController, modifier: M
                 }
             }
         )
-        Text(text = "Notes", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Notes", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
@@ -286,10 +287,11 @@ fun TaskDetailScreen(taskId: Long, navController: NavHostController, modifier: M
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
         )
         Spacer(Modifier.height(16.dp))
-        Text(text = "Pomodoro", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Pomodoro", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
         Text(
             text = "%02d:%02d".format(uiState.remainingSeconds / 60, uiState.remainingSeconds % 60),
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(16.dp)
         )
         Spacer(Modifier.height(8.dp))
         Row(
