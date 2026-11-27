@@ -38,7 +38,7 @@ jobs:
           retention-days: 30
 
   build-apk:
-    name: Assemble Debug APK
+    name: Assemble Release APK
     runs-on: ubuntu-latest
     needs: build-core-android
     continue-on-error: true
@@ -63,12 +63,12 @@ jobs:
       - name: Generate Gradle wrapper
         working-directory: clients/android
         run: gradle wrapper
-      - name: Assemble debug APK
+      - name: Assemble Release APK
         working-directory: clients/android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-android-apk
-          path: clients/android/app/build/outputs/apk/debug/*.apk
+          path: clients/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
         if: always()
