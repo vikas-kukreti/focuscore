@@ -45,7 +45,7 @@ jobs:
           path: clients/macos/Frameworks
       - name: Build SwiftPM executable
         working-directory: clients/macos
-        run: swift build --release
+        run: swift build -c release
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-macos-app

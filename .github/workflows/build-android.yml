@@ -49,6 +49,15 @@ jobs:
           distribution: "temurin"
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Install Gradle
+        run: |
+          curl -sL https://services.gradle.org/distributions/gradle-8.10.2-bin.zip -o gradle.zip
+          unzip -q gradle.zip
+          echo "GRADLE_HOME=$PWD/gradle-8.10.2" >> $GITHUB_ENV
+          echo "$PWD/gradle-8.10.2/bin" >> $GITHUB_PATH
+      - name: Generate Gradle wrapper
+        working-directory: clients/android
+        run: gradle wrapper
       - name: Assemble debug APK
         working-directory: clients/android
         run: ./gradlew assembleDebug
