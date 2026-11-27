@@ -27,20 +27,20 @@ class TodayGlance : GlanceAppWidget() {
         Column(modifier = GlanceModifier.fillMaxSize().padding(16.dp)) {
             Text(
                 text = context.getString(R.string.app_name),
-                fontSize = FontSize(18.sp),
+                fontSize = FontSize(18f),
                 color = Color.White
             )
             androidx.glance.layout.Spacer(modifier = GlanceModifier.height(8.dp))
             Text(
                 text = context.getString(R.string.today_widget_title),
-                fontSize = FontSize(16.sp),
+                fontSize = FontSize(16f),
                 color = Color.White
             )
             androidx.glance.layout.Spacer(modifier = GlanceModifier.height(8.dp))
             // Placeholder top 3 tasks for today (wire to native once bindings are generated):
-            Text(text = "Review quarterly goals", fontSize = FontSize(14.sp), color = Color.White)
-            Text(text = "Write weekly report", fontSize = FontSize(14.sp), color = Color.White)
-            Text(text = "Team sync", fontSize = FontSize(14.sp), color = Color.White)
+            Text(text = "Review quarterly goals", fontSize = FontSize(14f), color = Color.White)
+            Text(text = "Write weekly report", fontSize = FontSize(14f), color = Color.White)
+            Text(text = "Team sync", fontSize = FontSize(14f), color = Color.White)
         }
     }
 }
