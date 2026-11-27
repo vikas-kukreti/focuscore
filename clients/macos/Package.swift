@@ -9,19 +9,13 @@ let package = Package(
     ],
     dependencies: [],
     targets: [
-        .systemLibrary(
-            name: "CFocusCore",
-            path: "Frameworks",
-            pkgConfig: nil,
-            providers: []
-        ),
         .executableTarget(
             name: "FocusCore",
-            dependencies: ["CFocusCore"],
+            dependencies: [],
             path: "Sources/FocusCore",
             linkerSettings: [
                 .linkedLibrary("focuscore"),
-                .unsafeFlags(["-L", "Frameworks"])
+                .unsafeFlags(["-L", "Frameworks", "-lfocuscore"])
             ]
         ),
     ]
