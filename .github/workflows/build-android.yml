@@ -26,10 +26,17 @@ jobs:
       - name: Build core for Android
         run: cargo ndk build --release
         working-directory: core
+      - name: Organize Android JNI libs
+        run: |
+          mkdir -p jniLibs/arm64-v8a jniLibs/armeabi-v7a jniLibs/x86_64 jniLibs/x86
+          cp core/target/aarch64-linux-android/release/libfocuscore.so jniLibs/arm64-v8a/
+          cp core/target/armv7-linux-androideabi/release/libfocuscore.so jniLibs/armeabi-v7a/
+          cp core/target/x86_64-linux-android/release/libfocuscore.so jniLibs/x86_64/
+          cp core/target/i686-linux-android/release/libfocuscore.so jniLibs/x86/
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-android-libs
-          path: core/target/**/libfocuscore.so
+          path: jniLibs
           retention-days: 30
 
   build-apk:
