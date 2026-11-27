@@ -1,5 +1,6 @@
 package com.focuscore
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,9 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.focuscore.core.FocusCore
 
 class FocusService : Service() {
@@ -82,7 +83,7 @@ class FocusService : Service() {
     private fun showForegroundNotification(title: String, totalSeconds: Int, running: Boolean) {
         val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) CHANNEL_FOREGROUND else ""
         val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(android.R.drawable.ic_media_play)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(if (running) "Timer running" else "Timer paused")
             .setOngoing(true)
@@ -91,21 +92,22 @@ class FocusService : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         if (running && totalSeconds > 0) {
-            // Show elapsed time using when timestamp
-            val when = System.currentTimeMillis() - (totalSeconds * 1000L)
-            builder.setWhen(when)
-                .setShowWhen(true)
+            // Chronometer counts down from totalSeconds using elapsed-realtime clock.
+            val base = System.currentTimeMillis() - (totalSeconds * 1000L)
+            builder
                 .setUsesChronometer(true)
                 .setChronometerCountDown(true)
+                .setWhen(base)
+                .setShowWhen(true)
         }
 
         val openIntent = Intent(this, MainActivity::class.java)
-        val openPending = PendingIntent.getActivity(this, 0, openIntent, PendingIntent.FLAG_IMMUTABLE)
+        val openPending = PendingIntent.getActivity(this, 0, openIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(openPending)
 
-        builder.addAction(makeAction(android.R.drawable.ic_media_pause, getString(R.string.pause), ACTION_CMD_PAUSE))
-        builder.addAction(makeAction(android.R.drawable.ic_media_pause, getString(R.string.stop), ACTION_CMD_STOP))
-        builder.addAction(makeAction(android.R.drawable.ic_menu_save, getString(R.string.done), ACTION_CMD_DONE))
+        builder.addAction(makeAction(R.drawable.ic_pause, getString(R.string.pause), ACTION_CMD_PAUSE))
+        builder.addAction(makeAction(R.drawable.ic_stop, getString(R.string.stop), ACTION_CMD_STOP))
+        builder.addAction(makeAction(R.drawable.ic_done, getString(R.string.done), ACTION_CMD_DONE))
 
         val notification = builder.build()
         val nm = NotificationManagerCompat.from(this)
@@ -124,7 +126,7 @@ class FocusService : Service() {
 
     private fun makeAction(icon: Int, title: String, action: String): NotificationCompat.Action {
         val intent = Intent(this, FocusService::class.java).apply { this.action = action }
-        val pending = PendingIntent.getService(this, action.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
+        val pending = PendingIntent.getService(this, action.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         return NotificationCompat.Action.Builder(icon, title, pending).build()
     }
 }

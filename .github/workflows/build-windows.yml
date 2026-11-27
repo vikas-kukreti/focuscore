@@ -10,53 +10,59 @@ on:
 env:
   RUST_VERSION: "stable"
   CORE_MANIFEST: core/Cargo.toml
+  SOLUTION: clients/windows/FocusCore.WinUI/FocusCore.WinUI.csproj
 
 jobs:
   build-core:
     name: Build Rust core (cdylib)
-    runs-on: windows-2022
+    runs-on: windows-latest
     outputs:
       dll-path: ${{ steps.dll.outputs.path }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: C:\src\focuscore
       - uses: dtolnay/rust-toolchain@stable
       - name: Build core cdylib
         run: cargo build --release --manifest-path ${{ env.CORE_MANIFEST }}
+        working-directory: C:\src\focuscore
       - name: Locate dll
         id: dll
         run: |
-          $path = Get-ChildItem -Path "core/target/release/focuscore.dll" -ErrorAction SilentlyContinue
-          if (-not $path) { $path = Get-ChildItem -Path "core/target/release/libfocuscore.dll" -ErrorAction SilentlyContinue }
+          $path = Get-ChildItem -Path "C:\src\focuscore\core\target\release\focuscore.dll" -ErrorAction SilentlyContinue
+          if (-not $path) { $path = Get-ChildItem -Path "C:\src\focuscore\core\target\release\libfocuscore.dll" -ErrorAction SilentlyContinue }
           echo "path=$($path.FullName)" >> $env:GITHUB_OUTPUT
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-windows-core
-          path: core/target/release/focuscore.dll
+          path: C:\src\focuscore\core\target\release\focuscore.dll
           retention-days: 30
 
   build-winui:
     name: Build WinUI 3 client
-    runs-on: windows-2022
+    runs-on: windows-latest
     needs: build-core
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: C:\src\focuscore
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           name: focuscore-windows-core
-          path: clients/windows/FocusCore.WinUI
+          path: C:\src\focuscore\clients\windows\FocusCore.WinUI
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-      - name: Restore NuGet
-        working-directory: clients/windows/FocusCore.WinUI
-        run: dotnet restore
-      - name: Build WinUI 3 app
-        working-directory: clients/windows/FocusCore.WinUI
-        run: dotnet build -c Release -r win-x64 --self-contained true -v detailed
+      - uses: microsoft/setup-msbuild@v2
+      - name: Restore
+        run: msbuild ${{ env.SOLUTION }} /t:Restore /p:Configuration=Release
+      - name: Build WinUI 3 app (Publish)
+        run: msbuild ${{ env.SOLUTION }} /t:Publish /p:Configuration=Release /p:Platform=x64
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-windows-app
-          path: clients/windows/FocusCore.WinUI/bin/Release/**
+          path: C:\src\focuscore\clients\windows\FocusCore.WinUI\bin\x64\Release\publish\**
           retention-days: 30
         if: always()

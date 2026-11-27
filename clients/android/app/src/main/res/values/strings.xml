@@ -23,6 +23,9 @@
     <string name="schedule">Schedule</string>
     <string name="slot_empty">Empty slot</string>
 
+    <!-- FocusService actions -->
+    <string name="qs_tile_start">Start focus</string>
+
     <!-- Notification channels -->
     <string name="channel_foreground_name">FocusCore timer</string>
     <string name="channel_foreground_description">Ongoing timer notification</string>

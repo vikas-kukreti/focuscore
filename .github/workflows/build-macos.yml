@@ -49,8 +49,8 @@ jobs:
           retention-days: 30
         if: always()
 
-  create-installer:
-    name: Create macOS installer (.pkg)
+  create-dmg:
+    name: Create macOS DMG (drag-and-drop installer)
     runs-on: macos-latest
     needs: build-app
     continue-on-error: true
@@ -60,58 +60,22 @@ jobs:
         with:
           name: focuscore-macos-app
           path: clients/macos/.build/release
-      - name: Create installer package
+      - name: Create DMG
         run: |
           APP_PATH="clients/macos/.build/release/FocusCore"
-          INSTALLER_DIR="installer"
-          PKG_ROOT="$INSTALLER_DIR/pkgroot"
+          DMG_DIR="dmg"
+          PKG_ROOT="$DMG_DIR/pkgroot"
           
           mkdir -p "$PKG_ROOT/Applications"
           cp -R "$APP_PATH" "$PKG_ROOT/Applications/FocusCore.app"
           
-          # Create component package
-          pkgbuild \
-            --root "$PKG_ROOT" \
-            --identifier com.focuscore \
-            --version 0.1.0 \
-            --install-location / \
-            "$INSTALLER_DIR/FocusCore.pkg"
+          # Create DMG for drag-and-drop install
+          hdiutil create -volname "FocusCore" -srcfolder "$PKG_ROOT/Applications" -ov -format UDZO "$DMG_DIR/FocusCore.dmg"
           
-          # Create distribution package with customizations
-          cat > "$INSTALLER_DIR/Distribution.xml" << 'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <installer-gui-script minSpecVersion="2">
-            <title>FocusCore</title>
-            <organization>com.focuscore</organization>
-            <domains enable_anywhere="true"/>
-            <options customize="never" require-scripts="false" rootVolumeOnly="true"/>
-            <pkg-ref id="com.focuscore"/>
-            <choices-outline>
-              <line choice="default">
-                <line choice="com.focuscore"/>
-              </line>
-            </choices-outline>
-            <choice id="default"/>
-            <choice id="com.focuscore" visible="false">
-              <pkg-ref id="com.focuscore"/>
-            </choice>
-            <pkg-ref id="com.focuscore" version="0.1.0" onConclusion="none">FocusCore.pkg</pkg-ref>
-          </installer-gui-script>
-          EOF
-          
-          productbuild \
-            --distribution "$INSTALLER_DIR/Distribution.xml" \
-            --package-path "$INSTALLER_DIR" \
-            "$INSTALLER_DIR/FocusCore-Installer.pkg"
-          
-          # Also create a DMG for easy distribution
-          hdiutil create -volname "FocusCore" -srcfolder "$PKG_ROOT/Applications" -ov -format UDZO "$INSTALLER_DIR/FocusCore.dmg"
-          
-          echo "Installer created at: $INSTALLER_DIR/FocusCore-Installer.pkg"
-          echo "DMG created at: $INSTALLER_DIR/FocusCore.dmg"
+          echo "DMG created at: $DMG_DIR/FocusCore.dmg"
       - uses: actions/upload-artifact@v4
         with:
-          name: focuscore-macos-installer
-          path: installer/
+          name: focuscore-macos-dmg
+          path: dmg/
           retention-days: 30
         if: always()

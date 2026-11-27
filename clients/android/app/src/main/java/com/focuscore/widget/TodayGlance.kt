@@ -7,7 +7,9 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.GlanceModifier
 import androidx.glance.layout.Column
 import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
 import androidx.glance.unit.dp
+import androidx.glance.ColorProvider
 import androidx.compose.ui.graphics.Color
 import com.focuscore.MainActivity
 import com.focuscore.R
@@ -24,18 +26,24 @@ class TodayGlance : GlanceAppWidget() {
         Column(modifier = GlanceModifier.fillMaxSize().padding(16.dp)) {
             Text(
                 text = context.getString(R.string.app_name),
-                color = Color.White
+                style = TextStyle(
+                    color = ColorProvider(Color.White),
+                    fontSize = 18.sp
+                )
             )
             androidx.glance.layout.Spacer(modifier = GlanceModifier.height(8.dp))
             Text(
                 text = context.getString(R.string.today_widget_title),
-                color = Color.White
+                style = TextStyle(
+                    color = ColorProvider(Color.White),
+                    fontSize = 16.sp
+                )
             )
             androidx.glance.layout.Spacer(modifier = GlanceModifier.height(8.dp))
             // Placeholder top 3 tasks for today (wire to native once bindings are generated):
-            Text(text = "Review quarterly goals", color = Color.White)
-            Text(text = "Write weekly report", color = Color.White)
-            Text(text = "Team sync", color = Color.White)
+            Text(text = "Review quarterly goals", style = TextStyle(color = ColorProvider(Color.White), fontSize = 14.sp))
+            Text(text = "Write weekly report", style = TextStyle(color = ColorProvider(Color.White), fontSize = 14.sp))
+            Text(text = "Team sync", style = TextStyle(color = ColorProvider(Color.White), fontSize = 14.sp))
         }
     }
 }

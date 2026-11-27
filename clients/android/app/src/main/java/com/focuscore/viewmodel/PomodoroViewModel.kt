@@ -3,11 +3,10 @@ package com.focuscore.viewmodel
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableStateFlow
 import androidx.lifecycle.asStateFlow
+import androidx.lifecycle.viewModelScope
 import com.focuscore.FocusCoreClient
 import com.focuscore.FocusService
 import com.focuscore.model.Task
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 class PomodoroViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val prefs: SharedPreferences =
+    private val prefs: android.content.SharedPreferences =
         getApplication().getSharedPreferences("focuscore", Context.MODE_PRIVATE)
 
     private val _uiState = MutableStateFlow(TimerUiState())
@@ -100,7 +99,7 @@ class PomodoroViewModel(application: Application) : AndroidViewModel(application
             putExtra(FocusService.EXTRA_TASK_TITLE, title)
             putExtra(FocusService.EXTRA_TOTAL_SECONDS, totalSeconds)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {
             context.startService(intent)
@@ -112,7 +111,7 @@ class PomodoroViewModel(application: Application) : AndroidViewModel(application
         val intent = Intent(context, FocusService::class.java).apply {
             action = if (paused) FocusService.ACTION_CMD_PAUSE else FocusService.ACTION_CMD_START
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {
             context.startService(intent)
@@ -124,7 +123,7 @@ class PomodoroViewModel(application: Application) : AndroidViewModel(application
         val intent = Intent(context, FocusService::class.java).apply {
             action = FocusService.ACTION_CMD_STOP
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {
             context.startService(intent)
