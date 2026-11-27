@@ -60,19 +60,27 @@ jobs:
         with:
           name: focuscore-macos-app
           path: clients/macos/.build/release
-      - name: Create DMG
+      - name: Create macOS app bundle
         run: |
           APP_PATH="clients/macos/.build/release/FocusCore"
           DMG_DIR="dmg"
-          PKG_ROOT="$DMG_DIR/pkgroot"
+          APP_BUNDLE="$DMG_DIR/FocusCore.app"
           
-          mkdir -p "$PKG_ROOT/Applications"
-          cp -R "$APP_PATH" "$PKG_ROOT/Applications/FocusCore.app"
+          # Create proper macOS app bundle structure
+          mkdir -p "$APP_BUNDLE/Contents/MacOS"
+          mkdir -p "$APP_BUNDLE/Contents/Resources"
+          
+          # Copy executable
+          cp "$APP_PATH" "$APP_BUNDLE/Contents/MacOS/FocusCore"
+          chmod +x "$APP_BUNDLE/Contents/MacOS/FocusCore"
+          
+          # Copy Info.plist from sources
+          cp "clients/macos/Sources/FocusCore/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
           
           # Create DMG for drag-and-drop install
-          hdiutil create -volname "FocusCore" -srcfolder "$PKG_ROOT/Applications" -ov -format UDZO "$DMG_DIR/FocusCore.dmg"
+          hdiutil create -volname "FocusCore" -srcfolder "dmg" -ov -format UDZO "dmg/FocusCore.dmg"
           
-          echo "DMG created at: $DMG_DIR/FocusCore.dmg"
+          echo "DMG created at: dmg/FocusCore.dmg"
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-macos-dmg
