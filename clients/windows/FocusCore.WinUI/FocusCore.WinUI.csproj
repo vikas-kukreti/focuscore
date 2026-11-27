@@ -19,6 +19,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>None</WindowsPackageType>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+    <GenerateApplicationEntryPoint>false</GenerateApplicationEntryPoint>
   </PropertyGroup>
 
   <ItemGroup>
