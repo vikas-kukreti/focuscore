@@ -20,6 +20,7 @@
     <WindowsPackageType>None</WindowsPackageType>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
     <EnableDefaultApplicationEntryPoint>false</EnableDefaultApplicationEntryPoint>
+    <DisableWinUIEntryPointGeneration>true</DisableWinUIEntryPointGeneration>
   </PropertyGroup>
 
   <ItemGroup>
