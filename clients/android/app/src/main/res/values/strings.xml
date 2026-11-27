@@ -42,5 +42,4 @@
 
     <!-- Quick settings tile -->
     <string name="qs_tile_label">FocusCore</string>
-    <string name="qs_tile_start">Start focus</string>
 </resources>
