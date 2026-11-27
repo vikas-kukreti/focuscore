@@ -14,7 +14,7 @@ env:
 jobs:
   build-core:
     name: Build Rust core (cdylib)
-    runs-on: windows-latest
+    runs-on: windows-2022
     outputs:
       dll-path: ${{ steps.dll.outputs.path }}
     steps:
@@ -36,7 +36,7 @@ jobs:
 
   build-winui:
     name: Build WinUI 3 client
-    runs-on: windows-latest
+    runs-on: windows-2022
     needs: build-core
     continue-on-error: true
     steps:
@@ -48,20 +48,6 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-      - name: Use Windows 10 SDK 19041
-        run: |
-          $sdkPath = "C:\Program Files (x86)\Windows Kits\10"
-          $versions = Get-ChildItem "$sdkPath\bin" -Directory | Sort-Object Name -Descending
-          foreach ($v in $versions) {
-            Write-Host "Found Windows SDK: $($v.Name)"
-            if ($v.Name -like "10.0.19041*") {
-              echo "$($v.FullName)" >> $env:GITHUB_PATH
-              break
-            }
-          }
-          if ($versions.Count -gt 0) {
-            echo "$($versions[0].FullName)" >> $env:GITHUB_PATH
-          }
       - name: Restore NuGet
         working-directory: clients/windows/FocusCore.WinUI
         run: dotnet restore
