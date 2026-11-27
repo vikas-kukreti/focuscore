@@ -1,0 +1,5 @@
+module CFocusCore {
+    header "focuscore.h"
+    link "focuscore"
+    export *
+}

@@ -61,8 +61,8 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         TimeboxReminderReceiver.scheduleTimeboxReminder(
             getApplication(), taskId, title, startAtMillis
         )
-        _tasks.value = _tasks.value.map {
-            if (it.id == taskId) it.copy(timeboxAt = startAtMillis, timeboxMinutes = minutes) else it
+        _tasks.value = _tasks.value.map { task ->
+            if (task.id == taskId) task.copy(timeboxAt = startAtMillis, timeboxMinutes = minutes) else task
         }
     }
 }
