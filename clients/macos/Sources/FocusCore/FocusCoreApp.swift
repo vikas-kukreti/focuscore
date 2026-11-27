@@ -15,10 +15,10 @@ struct FocusCoreApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra(label: {
-            MenuBarLabelView()
-        }) {
+        MenuBarExtra {
             MenuBarView()
+        } label: {
+            MenuBarLabelView()
         }
         .environmentObject(FocusCoreService.shared)
         .environmentObject(PopoverCoordinator.shared)

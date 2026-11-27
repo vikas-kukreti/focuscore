@@ -7,12 +7,19 @@
     Width="1140"
     Height="720">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-          ColumnDefinitions="300,*,300"
-          RowDefinitions="Auto,*">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
 
         <!-- Pomodoro timer bar (accent) -->
-        <Border Grid.Row="0" Grid.ColumnSpan="3"
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
                 Background="{StaticResource AccentBrush}" Padding="14,10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -41,7 +48,11 @@
                   SelectionChanged="OnTaskSelected">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="Auto,*">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <CheckBox IsChecked="{Binding Done, Mode=TwoWay}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding Title}" Grid.Column="1" VerticalAlignment="Center"
                                    Margin="10,0,0,0" TextTrimming="CharacterEllipsis" />
@@ -55,8 +66,12 @@
                   IsItemClickEnabled="True" ItemClick="OnTimeboxSlotClick">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="Auto,*" Margin="0,4">
-                        <TextBlock Text="{Binding Label}" Width="56" VerticalAlignment="Center" />
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding TaskTitle}" Grid.Column="1" VerticalAlignment="Center"
                                    Margin="10,0,0,0" Opacity="0.8" />
                     </Grid>

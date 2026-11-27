@@ -4,6 +4,7 @@ import SwiftUI
 // MARK: - Global hotkey
 
 /// System-wide hotkey (Control+Shift+Space) that opens the menu bar quick-add popover.
+@MainActor
 public final class GlobalHotkey {
     public static let shared = GlobalHotkey()
 
@@ -49,6 +50,7 @@ public final class GlobalHotkey {
 /// MenuBarExtra handles click-to-open natively, but has no public API to open its popover
 /// programmatically, so the hotkey opens this separate NSPopover. Both popovers host the same
 /// `MenuBarView` and read from the shared `FocusCoreService`, so state stays consistent.
+@MainActor
 public final class PopoverCoordinator: NSObject, ObservableObject {
     public static let shared = PopoverCoordinator()
     public let popover = NSPopover()

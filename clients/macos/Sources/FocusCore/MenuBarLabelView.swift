@@ -25,7 +25,7 @@ struct MenuBarLabelView: View {
         }
     }
 
-    private var activeTask: Task? {
+    private var activeTask: TaskModel? {
         guard let id = service.timerState.taskId else { return nil }
         return service.tasks.first { $0.id == id }
     }

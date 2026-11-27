@@ -103,14 +103,15 @@ public final class NotificationManager: NSObject, UNUserNotificationCenterDelega
 
     // MARK: - UNUserNotificationCenterDelegate
 
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
+    // These methods are called on a background queue by the system, so they must be nonisolated
+    nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter,
                                        willPresent notification: UNNotification,
                                        withCompletionHandler completionHandler:
                                        @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound, .list])
     }
 
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
+    nonisolated public func userNotificationCenter(_ center: UNUserNotificationCenter,
                                        didReceive response: UNNotificationResponse,
                                        withCompletionHandler completionHandler: @escaping () -> Void) {
         let action = response.actionIdentifier

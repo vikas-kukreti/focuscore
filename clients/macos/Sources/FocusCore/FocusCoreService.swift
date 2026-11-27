@@ -29,7 +29,8 @@ public struct TimerState: Codable, Sendable, Equatable {
                                         remainingSec: 0, elapsedSec: 0)
 }
 
-public struct Task: Identifiable, Codable, Sendable, Equatable {
+// Renamed from `Task` to `TaskModel` to avoid conflict with Swift Concurrency `Task`
+public struct TaskModel: Identifiable, Codable, Sendable, Equatable {
     public var id: UUID
     public var parentId: UUID?
     public var title: String
@@ -60,7 +61,7 @@ public final class FocusCoreService: ObservableObject {
     }
 
     @Published public private(set) var timerState: TimerState = .idle
-    @Published public private(set) var tasks: [Task] = []
+    @Published public private(set) var tasks: [TaskModel] = []
     @Published public private(set) var isOpen: Bool = false
     @Published public private(set) var syncStatus: SyncStatus = .disconnected
     @Published public private(set) var errorMessage: String? = nil
@@ -68,7 +69,7 @@ public final class FocusCoreService: ObservableObject {
     /// ~/Library/Application Support/FocusCore/focuscore.db
     public let dbURL: URL
 
-    private var pollTask: Task<Void, Never>?
+    private var pollTask: Swift.Task<Void, Never>?
 
     private init() {
         if let support = FileManager.default.urls(for: .applicationSupportDirectory,
@@ -152,12 +153,12 @@ public final class FocusCoreService: ObservableObject {
 
     private func startPolling() {
         stopPolling()
-        pollTask = Task {
-            while !Task.isCancelled {
-                if let self {
+        pollTask = Swift.Task {
+            while !Swift.Task.isCancelled {
+                if let self = self {
                     await self.refreshTimerState()
                 }
-                try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+                try? await Swift.Task.sleep(nanoseconds: 1_000_000_000) // 1 second
             }
         }
     }

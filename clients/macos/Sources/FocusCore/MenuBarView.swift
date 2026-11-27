@@ -13,7 +13,7 @@ struct MenuBarView: View {
     @State private var tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var displaySeconds: Int = 0
 
-    private var activeTask: Task? {
+    private var activeTask: TaskModel? {
         guard let id = service.timerState.taskId else { return nil }
         return service.tasks.first { $0.id == id }
     }
@@ -117,13 +117,13 @@ struct MenuBarView: View {
                 displaySeconds = service.timerState.remainingSec
             }
         }
-        .onChange(of: service.timerState.remainingSec) { newValue in
+        .onChange(of: service.timerState.remainingSec) { _, newValue in
             displaySeconds = newValue
         }
     }
 
     // MARK: Today's tasks (scheduled for today, not deleted)
-    private var todayTasks: [Task] {
+    private var todayTasks: [TaskModel] {
         let cal = Calendar.current
         return service.tasks.filter {
             guard let date = $0.scheduledDate, $0.deletedAt == nil else { return false }
@@ -159,7 +159,7 @@ struct MenuBarView: View {
 // MARK: - Today row
 
 private struct TodayRow: View {
-    let task: Task
+    let task: TaskModel
 
     var body: some View {
         HStack(spacing: 8) {
