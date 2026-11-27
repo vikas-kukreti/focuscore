@@ -139,12 +139,12 @@ public partial class App : Application
         Shell_NotifyIconW(NIM_DELETE, ref nid);
     }
 
-    private void UpdateTrayTip(Core.TimerState st)
+    private void UpdateTrayTip(CoreService.TimerState st)
     {
         string tip = st.kind switch
         {
-            (int)Core.TimerStateKind.Running => $"FocusCore — {FormatTime(st.remaining_sec)} remaining",
-            (int)Core.TimerStateKind.Paused => "FocusCore — Paused",
+            (int)TimerStateKind.Running => $"FocusCore — {FormatTime(st.remaining_sec)} remaining",
+            (int)TimerStateKind.Paused => "FocusCore — Paused",
             _ => "FocusCore — Idle",
         };
         SetTrayTip(tip);
