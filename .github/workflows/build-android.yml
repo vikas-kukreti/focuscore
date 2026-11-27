@@ -24,7 +24,7 @@ jobs:
       - name: Install cargo-ndk
         run: cargo install cargo-ndk
       - name: Build core for Android
-        run: cargo ndk -- --release -C link-arg=-s
+        run: cargo ndk build --release -- -C link-arg=-s
         working-directory: core
       - uses: actions/upload-artifact@v4
         with:
