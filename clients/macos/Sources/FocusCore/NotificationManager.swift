@@ -5,6 +5,7 @@ import UserNotifications
 ///
 /// - Pomodoro completion → `pomodoro-complete` category (Start Break / Extend 5m / Mark Done)
 /// - Upcoming timebox blocks → `timebox-start` category via UNCalendarNotificationTrigger
+@MainActor
 public final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     public static let shared = NotificationManager()
 

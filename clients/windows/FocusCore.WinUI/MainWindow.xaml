@@ -40,10 +40,10 @@
         <ListView x:Name="TaskList" Grid.Row="1" Grid.Column="0" Margin="12,12,6,12"
                   SelectionChanged="OnTaskSelected">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:TaskViewModel">
+                <DataTemplate>
                     <Grid ColumnDefinitions="Auto,*">
-                        <CheckBox IsChecked="{x:Bind Done, Mode=TwoWay}" VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Bind Title}" Grid.Column="1" VerticalAlignment="Center"
+                        <CheckBox IsChecked="{Binding Done, Mode=TwoWay}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Title}" Grid.Column="1" VerticalAlignment="Center"
                                    Margin="10,0,0,0" TextTrimming="CharacterEllipsis" />
                     </Grid>
                 </DataTemplate>
@@ -54,10 +54,10 @@
         <ListView x:Name="TimeboxList" Grid.Row="1" Grid.Column="1" Margin="6,12,6,12"
                   IsItemClickEnabled="True" ItemClick="OnTimeboxSlotClick">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:TimeboxSlotVM">
+                <DataTemplate>
                     <Grid ColumnDefinitions="Auto,*" Margin="0,4">
-                        <TextBlock Text="{x:Bind Label}" Width="56" VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Bind TaskTitle}" Grid.Column="1" VerticalAlignment="Center"
+                        <TextBlock Text="{Binding Label}" Width="56" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding TaskTitle}" Grid.Column="1" VerticalAlignment="Center"
                                    Margin="10,0,0,0" Opacity="0.8" />
                     </Grid>
                 </DataTemplate>
