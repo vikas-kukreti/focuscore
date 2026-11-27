@@ -53,7 +53,7 @@ jobs:
         run: dotnet restore
       - name: Build WinUI 3 app
         working-directory: clients/windows/FocusCore.WinUI
-        run: dotnet build -c Release -r win-x64 --self-contained false
+        run: dotnet build -c Release -r win-x64 --self-contained true -v detailed
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-windows-app

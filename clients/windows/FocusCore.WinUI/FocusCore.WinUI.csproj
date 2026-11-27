@@ -8,6 +8,9 @@
     <UseWinUI>true</UseWinUI>
     <AssemblyName>FocusCore</AssemblyName>
     <RootNamespace>FocusCore.WinUI</RootNamespace>
+    <EnablePreviewMsixTooling>false</EnablePreviewMsixTooling>
+    <WindowsPackageType>None</WindowsPackageType>
+    <EnableXamlDiagnostics>false</EnableXamlDiagnostics>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250227000" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <!-- Toast content building (paired with Windows.AppNotifications from the App SDK). -->
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <!-- System Tray / NotifyIcon helper for WinUI (listed; tray in this build is implemented
