@@ -14,21 +14,25 @@
         <!-- Pomodoro timer bar (accent) -->
         <Border Grid.Row="0" Grid.ColumnSpan="3"
                 Background="{StaticResource AccentBrush}" Padding="14,10">
-            <Grid ColumnSpan="3" RowSpacing="6">
-            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
-                <TextBlock x:Name="TimerText" Text="00:00" Foreground="White"
-                           FontSize="40" FontWeight="Bold" />
-                <TextBlock x:Name="TimerTask" Text="No active timer" Foreground="White"
-                           Opacity="0.9" VerticalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right"
-                        VerticalAlignment="Center">
-                <TextBlock Text="Pomodoro (25:00)" Foreground="White" Opacity="0.9"
-                           VerticalAlignment="Center" Margin="0,0,8,0" />
-                <Button x:Name="BtnStartStop" Content="▶ Start" Click="OnTimerStartStop" />
-                <Button x:Name="BtnPause" Content="⏸ Pause" Click="OnTimerPause" />
-                <Button x:Name="BtnStop" Content="⏹ Stop" Click="OnTimerStop" />
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                    <TextBlock x:Name="TimerText" Text="00:00" Foreground="White"
+                               FontSize="40" FontWeight="Bold" />
+                    <TextBlock x:Name="TimerTask" Text="No active timer" Foreground="White"
+                               Opacity="0.9" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
+                            HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="Pomodoro (25:00)" Foreground="White" Opacity="0.9"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <Button x:Name="BtnStartStop" Content="▶ Start" Click="OnTimerStartStop" />
+                    <Button x:Name="BtnPause" Content="⏸ Pause" Click="OnTimerPause" />
+                    <Button x:Name="BtnStop" Content="⏹ Stop" Click="OnTimerStop" />
+                </StackPanel>
             </Grid>
         </Border>
 
