@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel;
 using Windows.Data.Xml.Dom;
-using Windows.AppNotifications;
+using Windows.UI.Notifications;
 
 using ToastContent = Microsoft.Toolkit.Uwp.Notifications.ToastContent;
 using ToastContentBuilder = Microsoft.Toolkit.Uwp.Notifications.ToastContentBuilder;
@@ -97,5 +97,5 @@ public static class ToastHelper
     }
 
     private static string EscapeText(string s) =>
-        s.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+        s.Replace("&", "&").Replace("<", "<").Replace(">", ">");
 }
