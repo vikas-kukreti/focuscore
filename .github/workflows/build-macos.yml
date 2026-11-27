@@ -13,23 +13,19 @@ env:
 
 jobs:
   build-core-macos:
-    name: Build Rust core (static lib + xcframework)
+    name: Build Rust core (static lib)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
-      - name: Build core static libs (both Apple silicon + Intel)
-        run: |
-          cargo build --release --manifest-path ${{ env.CORE_MANIFEST }} --target aarch64-apple-darwin
-          cargo build --release --manifest-path ${{ env.CORE_MANIFEST }} --target x86_64-apple-darwin
+          targets: aarch64-apple-darwin
+      - name: Build core static lib (Apple silicon)
+        run: cargo build --release --manifest-path ${{ env.CORE_MANIFEST }} --target aarch64-apple-darwin
       - uses: actions/upload-artifact@v4
         with:
           name: focuscore-macos-core
-          path: |
-            core/target/aarch64-apple-darwin/release/libfocuscore.a
-            core/target/x86_64-apple-darwin/release/libfocuscore.a
+          path: core/target/aarch64-apple-darwin/release/libfocuscore.a
           retention-days: 30
 
   build-app:
