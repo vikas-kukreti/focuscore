@@ -69,7 +69,7 @@ public final class FocusCoreService: ObservableObject {
     /// ~/Library/Application Support/FocusCore/focuscore.db
     public let dbURL: URL
 
-    private var pollTask: Swift.Task<Void, Never>?
+    nonisolated(unsafe) private var pollTask: Swift.Task<Void, Never>?
 
     private init() {
         if let support = FileManager.default.urls(for: .applicationSupportDirectory,

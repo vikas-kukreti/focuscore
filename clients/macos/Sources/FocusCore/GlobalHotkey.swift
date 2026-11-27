@@ -11,7 +11,7 @@ public final class GlobalHotkey {
     /// Invoked on the main thread when Control+Shift+Space is pressed.
     public var onTrigger: (() -> Void)?
 
-    private var monitor: Any?
+    nonisolated(unsafe) private var monitor: Any?
 
     private init() {}
 
