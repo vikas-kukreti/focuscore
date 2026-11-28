@@ -9,7 +9,7 @@ import androidx.glance.layout.Column
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.dp
-import androidx.glance.unit.sp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
 import com.focuscore.MainActivity
 import com.focuscore.R
