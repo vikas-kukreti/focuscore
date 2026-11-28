@@ -12,6 +12,7 @@ import androidx.glance.unit.dp
 import androidx.glance.text.FontSize
 import androidx.glance.ColorProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import com.focuscore.MainActivity
 import com.focuscore.R
 
