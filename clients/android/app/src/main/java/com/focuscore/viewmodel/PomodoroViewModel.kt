@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableStateFlow
-import androidx.lifecycle.asStateFlow
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.mutableStateOf
+import androidx.lifecycle.mutableStateOf
 import com.focuscore.FocusCoreClient
 import com.focuscore.FocusService
 import com.focuscore.model.Task
@@ -21,8 +21,9 @@ class PomodoroViewModel(application: Application) : AndroidViewModel(application
     private val prefs: android.content.SharedPreferences =
         getApplication().getSharedPreferences("focuscore", Context.MODE_PRIVATE)
 
-    private val _uiState = MutableStateFlow(TimerUiState())
-    val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
+    private val _uiState = mutableStateOf(TimerUiState())
+    val uiState: androidx.compose.runtime.State<TimerUiState>
+        get() = _uiState
 
     init {
         viewModelScope.launch {

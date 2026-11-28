@@ -3,12 +3,14 @@ package com.focuscore.viewmodel
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableStateFlow
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.mutableStateFlow
 import androidx.lifecycle.asStateFlow
 import com.focuscore.FocusCoreClient
 import com.focuscore.TimeboxReminderReceiver
 import com.focuscore.model.Task
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -16,8 +18,9 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         getApplication().getSharedPreferences("focuscore", android.content.Context.MODE_PRIVATE)
     private var nextTaskId = System.currentTimeMillis()
 
-    private val _tasks = MutableStateFlow(listOf<Task>())
-    val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
+    private val _tasks = mutableStateOf(listOf<Task>())
+    val tasks: androidx.compose.runtime.State<List<Task>>
+        get() = _tasks
 
     init {
         loadTasks()
@@ -58,7 +61,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Schedules an exact-alarm reminder for the timebox block and tags the task. */
     fun schedule(taskId: Long, title: String, startAtMillis: Long, minutes: Int) {
-        TimeboxReminderReceiver.scheduleTimeboxReminder(
+        com.focuscore.TimeboxReminderReceiver.scheduleTimeboxReminder(
             getApplication(), taskId, title, startAtMillis
         )
         _tasks.value = _tasks.value.map { task ->

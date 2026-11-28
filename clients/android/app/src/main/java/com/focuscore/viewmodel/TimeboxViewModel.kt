@@ -3,8 +3,7 @@ package com.focuscore.viewmodel
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableStateFlow
-import androidx.lifecycle.asStateFlow
+import androidx.lifecycle.mutableStateOf
 import com.focuscore.TimeboxReminderReceiver
 import com.focuscore.model.TimeboxSlot
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +14,9 @@ class TimeboxViewModel(application: Application) : AndroidViewModel(application)
     private val prefs: SharedPreferences =
         getApplication().getSharedPreferences("focuscore", android.content.Context.MODE_PRIVATE)
 
-    private val _slots = MutableStateFlow(buildSlots())
-    val slots: StateFlow<List<TimeboxSlot>> = _slots.asStateFlow()
+    private val _slots = mutableStateOf(buildSlots())
+    val slots: androidx.compose.runtime.State<List<TimeboxSlot>>
+        get() = _slots
 
     /** Half-hour slots from 06:00 to 23:00 today, with assigned tasks restored from prefs. */
     private fun buildSlots(): List<TimeboxSlot> {

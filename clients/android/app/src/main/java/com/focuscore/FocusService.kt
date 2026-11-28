@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.app.ServiceInfo
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -117,7 +118,7 @@ class FocusService : Service() {
             startForeground(
                 NOTIFICATION_ID,
                 notification,
-                android.app.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             )
         } else {
             startForeground(NOTIFICATION_ID, notification)

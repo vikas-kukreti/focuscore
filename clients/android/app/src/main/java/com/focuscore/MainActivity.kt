@@ -30,16 +30,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
@@ -59,6 +51,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.NavHostController
 import com.focuscore.model.Task
 import com.focuscore.model.TimerUiState
 import com.focuscore.model.TimeboxSlot
@@ -129,7 +123,7 @@ fun FocusCoreApp() {
 
 /** Bottom chip-style navigation: Today / Inbox / Timebox. */
 @Composable
-fun FocusBottomNav(navController: androidx.navigation.NavHostController) {
+fun FocusBottomNav(navController: NavHostController) {
     val route by navController.currentBackStackEntryAsState().value?.route ?: ""
     Row(
         modifier = Modifier
@@ -178,7 +172,7 @@ fun QuickAddFab() {
             onDismissRequest = { open = false },
             title = { Text(text = "Quick add") },
             text = {
-                androidx.compose.material3.TextField(
+                TextField(
                     value = title,
                     onValueChange = { title = it },
                     placeholder = { Text(text = "New task…") },
@@ -209,7 +203,7 @@ private val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
 
 /** Single task row: done checkbox, title/notes, timebox chip or Schedule button. */
 @Composable
-fun TaskRow(task: Task, navController: androidx.navigation.NavHostController, viewModel: TodayViewModel) {
+fun TaskRow(task: Task, navController: NavHostController, viewModel: TodayViewModel) {
     val timeLabel = task.timeboxAt?.let { timeFormatter.format(Date(it)) }
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
@@ -245,7 +239,7 @@ fun TaskRow(task: Task, navController: androidx.navigation.NavHostController, vi
 }
 
 @Composable
-fun TodayScreen(navController: androidx.navigation.NavHostController, modifier: Modifier) {
+fun TodayScreen(navController: NavHostController, modifier: Modifier) {
     val viewModel: TodayViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
@@ -259,7 +253,7 @@ fun TodayScreen(navController: androidx.navigation.NavHostController, modifier: 
 }
 
 @Composable
-fun InboxScreen(navController: androidx.navigation.NavHostController, modifier: Modifier) {
+fun InboxScreen(navController: NavHostController, modifier: Modifier) {
     val viewModel: TodayViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
@@ -274,7 +268,7 @@ fun InboxScreen(navController: androidx.navigation.NavHostController, modifier: 
 
 /** Task detail: editable notes and Pomodoro start/pause/stop. */
 @Composable
-fun TaskDetailScreen(taskId: Long, navController: androidx.navigation.NavHostController, modifier: Modifier) {
+fun TaskDetailScreen(taskId: Long, navController: NavHostController, modifier: Modifier) {
     val viewModel: TodayViewModel = viewModel()
     val pomodoro: PomodoroViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
@@ -293,7 +287,7 @@ fun TaskDetailScreen(taskId: Long, navController: androidx.navigation.NavHostCon
             }
         )
         Text(text = "Notes", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
-        androidx.compose.material3.OutlinedTextField(
+        OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
             label = { Text(text = "Notes") },
@@ -311,18 +305,9 @@ fun TaskDetailScreen(taskId: Long, navController: androidx.navigation.NavHostCon
             modifier = Modifier.padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(
-                enabled = !uiState.isRunning,
-                onClick = { pomodoro.start(task, totalSeconds) }
-            ) { Text(text = "Start") }
-            Button(
-                enabled = uiState.isRunning,
-                onClick = { pomodoro.pause() }
-            ) { Text(text = "Pause") }
-            Button(
-                enabled = uiState.isRunning,
-                onClick = { pomodoro.stop() }
-            ) { Text(text = "Stop") }
+            Button(enabled = !uiState.isRunning, onClick = { pomodoro.start(task, totalSeconds) }) { Text(text = "Start") }
+            Button(enabled = uiState.isRunning, onClick = { pomodoro.pause() }) { Text(text = "Pause") }
+            Button(enabled = uiState.isRunning, onClick = { pomodoro.stop() }) { Text(text = "Stop") }
         }
         Spacer(Modifier.height(12.dp))
         Row(
@@ -340,7 +325,7 @@ fun TaskDetailScreen(taskId: Long, navController: androidx.navigation.NavHostCon
 
 /** Timebox schedule: half-hour slots 06:00–23:00, each assignable to a task. */
 @Composable
-fun TimeboxScreen(navController: androidx.navigation.NavHostController, modifier: Modifier) {
+fun TimeboxScreen(navController: NavHostController, modifier: Modifier) {
     val viewModel: TimeboxViewModel = viewModel()
     val slots by viewModel.slots.collectAsStateWithLifecycle()
     var assignSlot by remember { mutableStateOf<TimeboxSlot?>(null) }
@@ -379,7 +364,7 @@ fun TimeboxScreen(navController: androidx.navigation.NavHostController, modifier
                 onDismissRequest = { assignSlot = null },
                 title = { Text(text = "Schedule task") },
                 text = {
-                    androidx.compose.material3.TextField(
+                    TextField(
                         value = slotTitle,
                         onValueChange = { slotTitle = it },
                         placeholder = { Text(text = "Task name") },
