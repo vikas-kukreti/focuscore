@@ -41,7 +41,6 @@ jobs:
     name: Assemble Release APK
     runs-on: ubuntu-latest
     needs: build-core-android
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -53,9 +52,11 @@ jobs:
           java-version: "17"
           distribution: "temurin"
       - name: Accept Android SDK licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
       - name: Install Android SDK platform
-        run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
+        run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      - name: Verify Android SDK platform
+        run: ls -la $ANDROID_HOME/platforms/android-36/
       - name: Install Gradle
         run: |
           curl -sL https://services.gradle.org/distributions/gradle-8.10.2-bin.zip -o gradle.zip
