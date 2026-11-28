@@ -77,6 +77,9 @@ jobs:
           # Copy Info.plist from sources
           cp "clients/macos/Sources/FocusCore/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
           
+          # Remove quarantine attribute to avoid "damaged" error on unsigned apps
+          xattr -cr "$APP_BUNDLE"
+          
           # Create DMG for drag-and-drop install
           hdiutil create -volname "FocusCore" -srcfolder "dmg" -ov -format UDZO "dmg/FocusCore.dmg"
           
