@@ -10,7 +10,6 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.dp
 import androidx.glance.unit.sp
-import androidx.glance.ColorProvider
 import androidx.compose.ui.graphics.Color
 import com.focuscore.MainActivity
 import com.focuscore.R
@@ -28,7 +27,7 @@ class TodayGlance : GlanceAppWidget() {
             Text(
                 text = context.getString(R.string.app_name),
                 style = TextStyle(
-                    colorProvider = ColorProvider(Color.White),
+                    color = Color.White,
                     fontSize = 18.sp
                 )
             )
@@ -36,15 +35,15 @@ class TodayGlance : GlanceAppWidget() {
             Text(
                 text = context.getString(R.string.today_widget_title),
                 style = TextStyle(
-                    colorProvider = ColorProvider(Color.White),
+                    color = Color.White,
                     fontSize = 16.sp
                 )
             )
             androidx.glance.layout.Spacer(modifier = GlanceModifier.height(8.dp))
             // Placeholder top 3 tasks for today (wire to native once bindings are generated):
-            Text(text = "Review quarterly goals", style = TextStyle(colorProvider = ColorProvider(Color.White), fontSize = 14.sp))
-            Text(text = "Write weekly report", style = TextStyle(colorProvider = ColorProvider(Color.White), fontSize = 14.sp))
-            Text(text = "Team sync", style = TextStyle(colorProvider = ColorProvider(Color.White), fontSize = 14.sp))
+            Text(text = "Review quarterly goals", style = TextStyle(color = Color.White, fontSize = 14.sp))
+            Text(text = "Write weekly report", style = TextStyle(color = Color.White, fontSize = 14.sp))
+            Text(text = "Team sync", style = TextStyle(color = Color.White, fontSize = 14.sp))
         }
     }
 }
