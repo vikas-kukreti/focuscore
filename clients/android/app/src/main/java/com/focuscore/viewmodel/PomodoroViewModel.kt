@@ -6,7 +6,8 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.mutableStateOf
-import androidx.lifecycle.mutableStateOf
+import androidx.lifecycle.mutableStateFlow
+import androidx.lifecycle.asStateFlow
 import com.focuscore.FocusCoreClient
 import com.focuscore.FocusService
 import com.focuscore.model.Task
