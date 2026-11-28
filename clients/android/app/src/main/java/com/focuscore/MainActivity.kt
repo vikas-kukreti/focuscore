@@ -59,8 +59,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavController
+import androidx.compose.foundation.background
 import com.focuscore.model.Task
 import com.focuscore.model.TimerUiState
 import com.focuscore.model.TimeboxSlot
@@ -119,7 +122,7 @@ fun FocusCoreApp() {
                     route = "$ROUTE_TASK_DETAIL/{taskId}",
                     arguments = listOf(navArgument("taskId") { type = NavType.LongType })
                 ) { backStackEntry ->
-                    val taskId = backStackEntry.getLong("taskId", 0L)
+                    val taskId = backStackEntry.arguments?.getLong("taskId") ?: 0L
                     TaskDetailScreen(taskId, navController, Modifier.fillMaxSize().padding(padding))
                 }
                 composable(ROUTE_TIMEBOX) {
