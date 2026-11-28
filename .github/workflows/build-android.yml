@@ -10,7 +10,8 @@ on:
 env:
   RUST_VERSION: "stable"
   CORE_MANIFEST: core/Cargo.toml
-  ANDROID_SDK_ROOT: /usr/lib/android-sdk
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+  ANDROID_HOME: /usr/local/lib/android/sdk
 
 jobs:
   build-core-android:
