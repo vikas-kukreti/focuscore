@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.weight
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -59,9 +59,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavController
 import com.focuscore.model.Task
 import com.focuscore.model.TimerUiState
@@ -91,7 +89,7 @@ class MainActivity : ComponentActivity() {
 private const val ROUTE_TODAY = "today"
 private const val ROUTE_INBOX = "inbox"
 private const val ROUTE_TIMEBOX = "timebox"
-private const val ROUTE_TASK_DETAIL = "task_detail/{taskId}"
+private const val ROUTE_TASK_DETAIL = "task_detail"
 
 @Composable
 fun FocusCoreApp() {
@@ -118,10 +116,10 @@ fun FocusCoreApp() {
                     InboxScreen(navController, Modifier.fillMaxSize().padding(padding))
                 }
                 composable(
-                    route = ROUTE_TASK_DETAIL,
+                    route = "$ROUTE_TASK_DETAIL/{taskId}",
                     arguments = listOf(navArgument("taskId") { type = NavType.LongType })
                 ) { backStackEntry ->
-                    val taskId = backStackEntry.arguments?.getLong("taskId") ?: 0L
+                    val taskId = backStackEntry.getLong("taskId", 0L)
                     TaskDetailScreen(taskId, navController, Modifier.fillMaxSize().padding(padding))
                 }
                 composable(ROUTE_TIMEBOX) {
@@ -150,15 +148,16 @@ fun FocusBottomNav(navController: NavController) {
         listOf(ROUTE_TODAY to "Today", ROUTE_INBOX to "Inbox", ROUTE_TIMEBOX to "Timebox")
             .forEach { (target, label) ->
                 val selected = route == target
+                val buttonWidth = (1f / 3f)
                 if (selected) {
                     FilledTonalButton(
                         onClick = { navController.navigate(target) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth().weight(buttonWidth)
                     ) { Text(text = label) }
                 } else {
                     TextButton(
                         onClick = { navController.navigate(target) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth().weight(buttonWidth)
                     ) { Text(text = label) }
                 }
             }
