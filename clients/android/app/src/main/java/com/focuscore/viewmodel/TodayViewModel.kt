@@ -3,14 +3,11 @@ package com.focuscore.viewmodel
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.mutableStateOf
-import androidx.lifecycle.mutableStateFlow
-import androidx.lifecycle.asStateFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
 import com.focuscore.FocusCoreClient
 import com.focuscore.TimeboxReminderReceiver
 import com.focuscore.model.Task
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,7 +16,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     private var nextTaskId = System.currentTimeMillis()
 
     private val _tasks = mutableStateOf(listOf<Task>())
-    val tasks: androidx.compose.runtime.State<List<Task>>
+    val tasks: State<List<Task>>
         get() = _tasks
 
     init {

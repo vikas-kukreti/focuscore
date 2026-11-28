@@ -29,6 +29,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -38,11 +41,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,24 +53,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.NavType
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.NavType
 import com.focuscore.model.Task
 import com.focuscore.model.TimerUiState
 import com.focuscore.model.TimeboxSlot
-import com.focuscore.viewmodel.PomodoroViewModel
-import com.focuscore.viewmodel.TimeboxViewModel
-import com.focuscore.viewmodel.TodayViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -103,7 +95,8 @@ fun FocusCoreApp() {
         Scaffold(
             bottomBar = { FocusBottomNav(navController) },
             floatingActionButton = {
-                if (navController.currentBackStackEntryAsState().value?.route == ROUTE_TODAY) {
+                val backStackEntry by navController.currentBackStackEntryAsState()
+                if (backStackEntry?.destination?.route == ROUTE_TODAY) {
                     QuickAddFab()
                 }
             }
@@ -136,8 +129,9 @@ fun FocusCoreApp() {
 
 /** Bottom chip-style navigation: Today / Inbox / Timebox. */
 @Composable
-fun FocusBottomNav(navController: NavHostController) {
-    val route by navController.currentBackStackEntryAsState().value?.route ?: ""
+fun FocusBottomNav(navController: NavController) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val route = backStackEntry?.destination?.route ?: ""
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,7 +210,7 @@ private val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
 
 /** Single task row: done checkbox, title/notes, timebox chip or Schedule button. */
 @Composable
-fun TaskRow(task: Task, navController: NavHostController, viewModel: TodayViewModel) {
+fun TaskRow(task: Task, navController: NavController, viewModel: TodayViewModel) {
     val timeLabel = task.timeboxAt?.let { timeFormatter.format(Date(it)) }
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
@@ -252,7 +246,7 @@ fun TaskRow(task: Task, navController: NavHostController, viewModel: TodayViewMo
 }
 
 @Composable
-fun TodayScreen(navController: NavHostController, modifier: Modifier) {
+fun TodayScreen(navController: NavController, modifier: Modifier) {
     val viewModel: TodayViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
@@ -266,7 +260,7 @@ fun TodayScreen(navController: NavHostController, modifier: Modifier) {
 }
 
 @Composable
-fun InboxScreen(navController: NavHostController, modifier: Modifier) {
+fun InboxScreen(navController: NavController, modifier: Modifier) {
     val viewModel: TodayViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
     Column(modifier = modifier) {
@@ -281,7 +275,7 @@ fun InboxScreen(navController: NavHostController, modifier: Modifier) {
 
 /** Task detail: editable notes and Pomodoro start/pause/stop. */
 @Composable
-fun TaskDetailScreen(taskId: Long, navController: NavHostController, modifier: Modifier) {
+fun TaskDetailScreen(taskId: Long, navController: NavController, modifier: Modifier) {
     val viewModel: TodayViewModel = viewModel()
     val pomodoro: PomodoroViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
@@ -338,7 +332,7 @@ fun TaskDetailScreen(taskId: Long, navController: NavHostController, modifier: M
 
 /** Timebox schedule: half-hour slots 06:00–23:00, each assignable to a task. */
 @Composable
-fun TimeboxScreen(navController: NavHostController, modifier: Modifier) {
+fun TimeboxScreen(navController: NavController, modifier: Modifier) {
     val viewModel: TimeboxViewModel = viewModel()
     val slots by viewModel.slots.collectAsStateWithLifecycle()
     var assignSlot by remember { mutableStateOf<TimeboxSlot?>(null) }

@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.app.ServiceInfo
+import android.os.Build.VERSION_CODES
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -114,7 +115,7 @@ class FocusService : Service() {
         val nm = NotificationManagerCompat.from(this)
         nm.notify(NOTIFICATION_ID, notification)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
             startForeground(
                 NOTIFICATION_ID,
                 notification,

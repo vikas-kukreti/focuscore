@@ -5,15 +5,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.mutableStateOf
-import androidx.lifecycle.mutableStateFlow
-import androidx.lifecycle.asStateFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
 import com.focuscore.FocusCoreClient
 import com.focuscore.FocusService
 import com.focuscore.model.Task
 import com.focuscore.model.TimerUiState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -23,7 +21,7 @@ class PomodoroViewModel(application: Application) : AndroidViewModel(application
         getApplication().getSharedPreferences("focuscore", Context.MODE_PRIVATE)
 
     private val _uiState = mutableStateOf(TimerUiState())
-    val uiState: androidx.compose.runtime.State<TimerUiState>
+    val uiState: State<TimerUiState>
         get() = _uiState
 
     init {
