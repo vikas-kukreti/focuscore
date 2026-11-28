@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.weight
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -65,6 +66,9 @@ import androidx.navigation.NavController
 import com.focuscore.model.Task
 import com.focuscore.model.TimerUiState
 import com.focuscore.model.TimeboxSlot
+import com.focuscore.viewmodel.PomodoroViewModel
+import com.focuscore.viewmodel.TimeboxViewModel
+import com.focuscore.viewmodel.TodayViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
